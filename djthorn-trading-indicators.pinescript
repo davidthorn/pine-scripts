@@ -1,5 +1,6 @@
 //@version=5
 //@description An indicator that displays all other indicators that are helpful to see in which direction the market may turn.
+// Last Updated 30.03.2024 11:26 CET
 indicator("DJThorn Trading Indicators", overlay=true)
 
 var int highestIndex = na
@@ -17,7 +18,7 @@ lower = low
 // Calculate future bar index for the rectangle's end
 endBar = bar_index + 500    
 
-// Draw the rectangle
+// Draw the rectangle 
 drawRectangle(bar_index, endBar, upper, lower)
     
 // Plot the EMA on the chart
@@ -115,3 +116,37 @@ p1 = plot(bbBasis, "Basis", color=color.rgb(33, 149, 243, 93), display = display
 p2 = plot(bbUpperBand, "Upper Band", color=color.rgb(255, 82, 82, 94), display = display.pane)
 p3 = plot(bbLowerBand, "Lower Band", color=color.rgb(76, 175, 79, 95), display = display.pane)
 fill(p2, p3, color=color.new(#fdb6e4, 96), title="BB Background")
+
+int legsInput = input(50, "Leg Input Interval", group = "Pivot High", display = display.data_window)
+
+// Define the `pivotPoint` UDT.
+type pivotPoint
+    int x
+    float y
+    string xloc = xloc.bar_time
+
+// Detect high pivots.
+pivotHighPrice = ta.pivothigh(legsInput, legsInput)
+if not na(pivotHighPrice)
+    // A new high pivot was found; display a label where it occurred `legsInput` bars back.
+    foundPoint = pivotPoint.new(time[legsInput], pivotHighPrice)
+    label.new(
+      foundPoint.x,
+      foundPoint.y + (high - low),
+      str.tostring(foundPoint.y, format.mintick),
+      foundPoint.xloc,
+      color = color.red,
+      textcolor = color.white)
+
+// Detect high pivots.
+pivotLowPrice = ta.pivotlow(legsInput, legsInput)
+if not na(pivotLowPrice)
+    // A new high pivot was found; display a label where it occurred `legsInput` bars back.
+    foundPoint = pivotPoint.new(time[legsInput], pivotLowPrice)
+    label.new(
+      foundPoint.x,
+      foundPoint.y - (high - low),
+      str.tostring(foundPoint.y, format.mintick),
+      foundPoint.xloc,
+      color = color.green,
+      textcolor = color.white, style = label.style_label_up)
