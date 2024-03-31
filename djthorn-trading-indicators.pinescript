@@ -9,7 +9,7 @@ var int highestIndex = na
 drawRectangle(startBar, endBar, upper, lower) =>
     box.new(left=startBar, right=endBar, top=upper, bottom=lower, border_width =0, bgcolor=color.new(#319540, 99))
 
-marginMultiplier = input.float(5, "Marker Multiplier", group = "RSI Settings", tooltip = "The multiplier used to push the RSI overbought/sold markers away from the candle.", minval=0.01, step=0.1, display = display.none)
+marginMultiplier = input.float(1.2, "Marker Multiplier", group = "RSI Settings", tooltip = "The multiplier used to push the RSI overbought/sold markers away from the candle.", minval=0.01, step=0.1, display = display.none)
 
 // Determine the rectangle's boundaries
 upper = close > open ? open : close
@@ -94,10 +94,10 @@ isOversold = rsi < oversoldLevel
 // Plot arrows for overbought and oversold conditions
 if (isOverbought and volume >= 2.5 * avgVolume50)
     // Draw a downward facing arrow above the candle for overbought conditions
-    label.new(x=bar_index, y=high + (high - low) * marginMultiplier, style=label.style_label_down, color=color.rgb(255, 82, 82, 88), size=size.small, text="↓")
+    label.new(x=bar_index, y=high * 1.001, style=label.style_label_down, color=color.rgb(255, 82, 82, 88), size=size.small, text="↓")
 if (isOversold)
     // Draw an upward facing arrow below the candle for oversold conditions 
-    label.new(x=bar_index, y=low - (high - low) * marginMultiplier, style=label.style_label_up, color=color.rgb(76, 175, 79, 86), size=size.small, text="↑")  
+    label.new(x=bar_index, y=low * 0.999, style=label.style_label_up, color=color.rgb(76, 175, 79, 86), size=size.small, text="↑")  
   
 
 // Inputs for Bollinger Bands
@@ -132,7 +132,7 @@ if not na(pivotHighPrice)
     foundPoint = pivotPoint.new(time[legsInput], pivotHighPrice)
     label.new(
       foundPoint.x,
-      foundPoint.y + (high - low),
+      foundPoint.y * 1.001,
       str.tostring(foundPoint.y, format.mintick),
       foundPoint.xloc,
       color = color.red,
@@ -145,8 +145,24 @@ if not na(pivotLowPrice)
     foundPoint = pivotPoint.new(time[legsInput], pivotLowPrice)
     label.new(
       foundPoint.x,
-      foundPoint.y - (high - low),
+      foundPoint.y * 0.999,
       str.tostring(foundPoint.y, format.mintick),
       foundPoint.xloc,
       color = color.green,
-      textcolor = color.white, style = label.style_label_up)
+      textcolor = color.white, 
+      style = label.style_label_up
+      )
+
+type customPivotPoint
+    int openTime
+    float level
+
+// // Create an empty `pivotPoint` array.
+var pivotHighArray = array.new<customPivotPoint>()
+
+// // Add a new `pivotPoint` object to the end of the array for each detected pivot.
+if not na(pivotHighPrice)
+    // A new pivot is found; create a new object of `pivotPoint` type, setting its `openTime` and `level` fields.
+    newPivot = customPivotPoint.new(time[legsInput], pivotHighPrice)
+    // Add the new pivot object to the array.
+    array.push(pivotHighArray, newPivot)
