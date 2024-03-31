@@ -9,8 +9,6 @@ var int highestIndex = na
 drawRectangle(startBar, endBar, upper, lower) =>
     box.new(left=startBar, right=endBar, top=upper, bottom=lower, border_width =0, bgcolor=color.new(#319540, 99))
 
-marginMultiplier = input.float(1.2, "Marker Multiplier", group = "RSI Settings", tooltip = "The multiplier used to push the RSI overbought/sold markers away from the candle.", minval=0.01, step=0.1, display = display.none)
-
 // Determine the rectangle's boundaries
 upper = close > open ? open : close
 lower = low
