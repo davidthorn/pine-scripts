@@ -1,6 +1,6 @@
 //@version=5
 //@description An indicator that displays all other indicators that are helpful to see in which direction the market may turn.
-// Last Updated 30.03.2024 11:26 CET
+// Last Updated 08.04.2024 09:40 CET
 indicator("DJThorn Trading Indicators", overlay=true)
 
 var int highestIndex = na
@@ -117,6 +117,8 @@ fill(p2, p3, color=color.new(#fdb6e4, 96), title="BB Background")
 
 int legsInput = input(50, "Leg Input Interval", group = "Pivot High", display = display.data_window)
 
+enablePivotMarkers = input(true, "Enable Pivot Markers")
+
 // Define the `pivotPoint` UDT.
 type pivotPoint
     int x
@@ -125,7 +127,7 @@ type pivotPoint
 
 // Detect high pivots.
 pivotHighPrice = ta.pivothigh(legsInput, legsInput)
-if not na(pivotHighPrice)
+if enablePivotMarkers and not na(pivotHighPrice)
     // A new high pivot was found; display a label where it occurred `legsInput` bars back.
     foundPoint = pivotPoint.new(time[legsInput], pivotHighPrice)
     label.new(
@@ -138,7 +140,7 @@ if not na(pivotHighPrice)
 
 // Detect high pivots.
 pivotLowPrice = ta.pivotlow(legsInput, legsInput)
-if not na(pivotLowPrice)
+if enablePivotMarkers and not na(pivotLowPrice)
     // A new high pivot was found; display a label where it occurred `legsInput` bars back.
     foundPoint = pivotPoint.new(time[legsInput], pivotLowPrice)
     label.new(
@@ -159,7 +161,7 @@ type customPivotPoint
 var pivotHighArray = array.new<customPivotPoint>()
 
 // // Add a new `pivotPoint` object to the end of the array for each detected pivot.
-if not na(pivotHighPrice)
+if enablePivotMarkers and not na(pivotHighPrice)
     // A new pivot is found; create a new object of `pivotPoint` type, setting its `openTime` and `level` fields.
     newPivot = customPivotPoint.new(time[legsInput], pivotHighPrice)
     // Add the new pivot object to the array.
