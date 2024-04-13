@@ -1,6 +1,6 @@
 //@version=5
 //@description An indicator that displays all other indicators that are helpful to see in which direction the market may turn.
-// Last Updated 08.04.2024 09:40 CET
+// Last Updated 13.04.2024 08:21 CET
 indicator("DJThorn Trading Indicators", overlay=true)
 
 var int highestIndex = na
@@ -84,16 +84,17 @@ oversoldLevel = input.int(30, "Oversold Level", group = "RSI Settings", tooltip 
 
 // Calculate RSI
 rsi = ta.rsi(close, rsiLength)
+enableRSIMarkers = input(true, "Enable RSI Markers")
 
 // Determine overbought and oversold conditions
 isOverbought = rsi > overboughtLevel
 isOversold = rsi < oversoldLevel
 
 // Plot arrows for overbought and oversold conditions
-if (isOverbought and volume >= 2.5 * avgVolume50)
+if enableRSIMarkers and (isOverbought and volume >= 2.5 * avgVolume50)
     // Draw a downward facing arrow above the candle for overbought conditions
     label.new(x=bar_index, y=high * 1.001, style=label.style_label_down, color=color.rgb(255, 82, 82, 88), size=size.small, text="↓")
-if (isOversold)
+if enableRSIMarkers and (isOversold)
     // Draw an upward facing arrow below the candle for oversold conditions 
     label.new(x=bar_index, y=low * 0.999, style=label.style_label_up, color=color.rgb(76, 175, 79, 86), size=size.small, text="↑")  
   
@@ -118,6 +119,7 @@ fill(p2, p3, color=color.new(#fdb6e4, 96), title="BB Background")
 int legsInput = input(50, "Leg Input Interval", group = "Pivot High", display = display.data_window)
 
 enablePivotMarkers = input(true, "Enable Pivot Markers")
+
 
 // Define the `pivotPoint` UDT.
 type pivotPoint
