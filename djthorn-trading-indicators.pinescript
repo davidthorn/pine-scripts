@@ -1,6 +1,6 @@
 //@version=5
 //@description An indicator that displays all other indicators that are helpful to see in which direction the market may turn.
-// Last Updated 13.04.2024 08:21 CET
+// Last Updated 25.04.2024 11:15 CET
 indicator("DJThorn Trading Indicators", overlay=true)
 
 var int highestIndex = na
@@ -23,7 +23,7 @@ drawRectangle(bar_index, endBar, upper, lower)
 
 level1 = input.int(5, "Level 1", tooltip = "The value used for the 5-Period EMA", group = "EMA", display = display.none)
 level2 = input.int(8, "Level 2", tooltip = "The value used for the 8-Period EMA", group = "EMA", display = display.none)
-level3 = input.int(15, "Level 3", tooltip = "The value used for the 15-Period EMA", group = "EMA", display = display.none)
+level3 = input.int(20, "Level 3", tooltip = "The value used for the 15-Period EMA", group = "EMA", display = display.none)
 level4 = input.int(50, "Level 4", tooltip = "The value used for the 50-Period EMA", group = "EMA", display = display.none)
 level5 = input.int(200, "Level 5", tooltip = "The value used for the 200-Period EMA", group = "EMA", display = display.none)
 level6 = input.int(300, "Level 6", tooltip = "The value used for the 300-Period EMA", group = "EMA", display = display.none)
@@ -53,8 +53,8 @@ candleDown = close < open
 candleNeutral = close == open
 
 // Define colors based on conditions
-barColor = candleUp ? volume >= 2.5 * avgVolume50 ? color.green : volume >= 1.5 * avgVolume50 ? color.blue : volume >= 0.5 * avgVolume50 ? color.gray : color.new(color.green, 90) :
-          candleDown ? volume >= 2.5 * avgVolume50 ? color.red : volume >= 1.5 * avgVolume50 ? color.purple :volume >= 0.5 * avgVolume50 ? color.maroon : color.new(color.red, 90) :
+barColor = candleUp ? volume >= 2.5 * avgVolume50 and low == open ? color.green : volume >= 1.5 * avgVolume50 ? color.blue : volume >= 0.5 * avgVolume50 ? color.gray : color.new(color.green, 90) :
+          candleDown ? volume >= 2.5 * avgVolume50 and high == open ? color.red : volume >= 1.5 * avgVolume50 ? color.purple :volume >= 0.5 * avgVolume50 ? color.maroon : color.new(color.red, 90) :
           candleNeutral ? color.new(color.gray, 90) : na
 
 // Apply background color
