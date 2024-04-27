@@ -1,9 +1,11 @@
 //@version=5
 //@description An indicator that displays all other indicators that are helpful to see in which direction the market may turn.
-// Last Updated 25.04.2024 11:15 CET
+// Last Updated 27.04.2024 09:29 CET
 indicator("DJThorn Trading Indicators", overlay=true)
 
 var int highestIndex = na
+
+vectorPercentage = input.float(0.92, "Vector Candle Percentage", tooltip = "The percentage of the wick between the close and the high/low", group = "Vector", display = display.none) 
 
 // Function to draw a rectangle
 drawRectangle(startBar, endBar, upper, lower) =>
@@ -53,8 +55,8 @@ candleDown = close < open
 candleNeutral = close == open
 
 // Define colors based on conditions
-barColor = candleUp ? volume >= 2.5 * avgVolume50 and low == open ? color.green : volume >= 1.5 * avgVolume50 ? color.blue : volume >= 0.5 * avgVolume50 ? color.gray : color.new(color.green, 90) :
-          candleDown ? volume >= 2.5 * avgVolume50 and high == open ? color.red : volume >= 1.5 * avgVolume50 ? color.purple :volume >= 0.5 * avgVolume50 ? color.maroon : color.new(color.red, 90) :
+barColor = candleUp ? volume >= 2.5 * avgVolume50 and low == open and ((close - open) / (high - low)) >= vectorPercentage ? color.green : volume >= 1.5 * avgVolume50 ? color.blue : volume >= 0.5 * avgVolume50 ? color.gray : color.new(color.green, 90) :
+          candleDown ? volume >= 2.5 * avgVolume50 and high == open and ((open - close) / (high - low)) >= vectorPercentage ? color.red : volume >= 1.5 * avgVolume50 ? color.purple :volume >= 0.5 * avgVolume50 ? color.maroon : color.new(color.red, 90) :
           candleNeutral ? color.new(color.gray, 90) : na
 
 // Apply background color
